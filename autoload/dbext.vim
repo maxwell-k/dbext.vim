@@ -3428,31 +3428,18 @@ function! s:DB_SQLITE_stripHeaderFooter(result)
 endfunction
 
 function! s:DB_SQLITE_getListColumn(table_name)
+
+    let result = ".mode csv\n.headers off\n"
+    let result .= "PRAGMA table_info(" . a:table_name . ");"
+
     let l:prev_use_result_buffer = s:DB_get('use_result_buffer')
     call s:DB_set('use_result_buffer', 0)
-
-    let result = s:DB_SQLITE_describeTable(a:table_name)
-
+    let result = s:DB_SQLITE_execSql(result)
     call s:DB_set('use_result_buffer', l:prev_use_result_buffer)
-    " \<C-J> = Enter
-    " Remove all newlines
-    let result = substitute( result, '[ '."\<C-J>".']', ' ', 'g' )
-    " Strip off beginning create table command
-    let result = substitute( result, '^\s*create.*table\s\+'.a:table_name.'\s*(\s*', '', '' )
-    " Strip off trailing part of create table statement
-    let result = substitute( result, 'primary\s\+key\s*(.*', '', '' )
-    " Strip off trailing part of create table statement
-    let result = substitute( result, 'unique\s*(.*', '', '' )
-    " Strip off trailing part of create table statement
-    let result = substitute( result, '\s*)\s*;', ',', '' )
-    " Strip off data types
-    let result = substitute( result, '\s*\(\w\+\).\{-}\([,]\+\|$\)', '\1, ', 'g' )
-    " Strip off trailing ,
-    let result = substitute( result, ',\s*$', "\n", '' )
-    " Strip off all following spaces and newlines
-    " let result = substitute( result, '\w\>\zs[ '."\<C-J>".']*$', '\1', '' )
 
-    return s:DB_SQLITE_stripHeaderFooter(result)
+    let result = substitute(result, '\d\+,', '', 'g')
+    let result = substitute(result, ',.\{-\}\n', ',', 'g')
+    return result
 endfunction
 
 function! s:DB_SQLITE_getListTable(table_prefix)
