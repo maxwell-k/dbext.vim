@@ -3394,8 +3394,13 @@ function! s:DB_SQLITE_execSql(str)
     let cmd = dbext#DB_getWType("cmd_options")
     let cmd = cmd .
                 \ s:DB_option(' ', dbext#DB_getWTypeDefault("extra"), '') .
-                \ s:DB_option(' ', s:DB_get("dbname"), '') .
-                \ ' < ' . s:dbext_tempfile
+                \ s:DB_option(' ', s:DB_get("dbname"), '')
+    " In SQLite 3.15.0 the .read command works with forward slashes as the
+    " directory separator on Windows, whereas input redirection ( < ) fails
+    " silently with job_start
+    let cmd .=  ' ".read '.fnameescape(
+                \ substitute(s:dbext_tempfile, '\\', '/', 'g')
+                \ ).'"'
     let result = s:DB_runCmdJobSupport(dbext_bin, cmd, output, "")
 
     return result
