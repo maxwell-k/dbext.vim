@@ -7848,7 +7848,8 @@ function! s:DB_addToResultBuffer(output, do_clear)
     endif
 
     " Since this is a small window, remove any blanks lines
-    silent %g/^\s*$/d
+    " FIXME: wrap this in an option
+    " silent %g/^\s*$/d
     " Fix the ^M characters, if any
     silent execute "%s/\<C-M>\\+$//e"
     " Dont allow modifications, and do not wrap the text, since
