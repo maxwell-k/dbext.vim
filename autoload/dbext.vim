@@ -7200,6 +7200,18 @@ function! s:DB_runCmdJobSupport(binary, args, sql, result)
     " Return to original window
     exec s:dbext_prev_winnr."wincmd w"
 
+    if has('unix')
+        " convert from string to list
+        let start = split(cmd)
+        let last = len(start) - match(reverse(copy(start)), '"$') - 1
+        let first = len(start) - match(reverse(copy(start)), '^"') - 1
+        let start[first] = start[first]
+        let result = start[:(first-1)]
+        let result += [join(start[first:last])[1:-2]]
+        let result += start[(last+1):]
+        let cmd = result
+    endif
+
     "echomsg "DB_runCmdJobSupport: " . cmd
     let s:dbext_job = job_start(cmd, l:options)
     " let s:dbext_job = job_start( 
