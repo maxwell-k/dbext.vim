@@ -6363,6 +6363,7 @@ endfunction
 " General {{{
 function! s:DB_infoMsg(msg)
     echomsg a:msg
+    redraw
 endfunction
 
 function! s:DB_warningMsg(msg)
