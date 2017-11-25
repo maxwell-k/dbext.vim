@@ -9884,7 +9884,7 @@ function! s:DB_historySave(auto_hide)
         exec 'silent! '.size.',$d'
     endif
 
-    silent! write
+    silent write
 
     setlocal readonly
 
