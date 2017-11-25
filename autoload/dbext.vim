@@ -9870,7 +9870,6 @@ endfunction
 
 function! s:DB_historySave(auto_hide)
     " Do setup always, just in case.
-    " setlocal buftype=nofile
     setlocal bufhidden=hide
     setlocal nobuflisted
     setlocal noswapfile
